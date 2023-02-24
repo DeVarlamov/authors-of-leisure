@@ -8,6 +8,7 @@ from posts.forms import CommentForm, PostForm
 from .models import Follow, Post, Group, User
 from .utils import get_page
 
+
 @cache_page(20, key_prefix='index_page')
 @vary_on_cookie
 def index(request):
@@ -50,7 +51,7 @@ def post_detail(request, post_id):
                    'requser': request.user,
                    'form': CommentForm(),
                    'comments': post.comments.all()})
-   
+
 
 @login_required
 def post_create(request):
@@ -93,6 +94,7 @@ def add_comment(request, post_id):
         comment.save()
     return redirect('posts:post_detail', post_id=post_id)
 
+
 @login_required
 def follow_index(request):
     """информация о текущем пользователе доступна в переменной"""
@@ -100,7 +102,8 @@ def follow_index(request):
     page_obj = get_page(request, posts)
     return render(request, 'posts/follow.html', {
         'page_obj': page_obj}
-        )
+    )
+
 
 @login_required
 def profile_follow(request, username):
@@ -109,6 +112,7 @@ def profile_follow(request, username):
     if author != request.user:
         Follow.objects.get_or_create(user=request.user, author=author)
     return redirect('posts:profile', author)
+
 
 @login_required
 def profile_unfollow(request, username):
