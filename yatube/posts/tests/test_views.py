@@ -107,7 +107,6 @@ class PostPagesTests(TestCase):
             reverse('users:login') + '?next=' + address
         )
         self.assertEqual(Comment.objects.count(), comments_count)
-        self.assertEqual(Comment.objects.count(), comments_count)
 
     def test_forms_show_correct(self):
         """Проверка коректности формы."""
