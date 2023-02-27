@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-from posts.forms import PostForm
+from posts.forms import CommentForm, PostForm
 
 from ..models import Comment, Follow, Group, Post, User
 
@@ -162,7 +162,7 @@ class PostPagesTests(TestCase):
                 kwargs={'post_id': self.post.id}))
         self.check_post_info(response.context)
         self.assertEqual(response.context['comments'][0], self.comment)
-        self.assertTrue('form' in response.context)
+        self.assertIsInstance(response.context.get('form'), CommentForm)
 
     def test_cache_index_page(self):
         """Проверка работы кеша"""
