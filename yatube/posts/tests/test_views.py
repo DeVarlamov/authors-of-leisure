@@ -9,7 +9,7 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from posts.forms import PostForm
 
-from ..models import Follow, Group, Post, User
+from ..models import Comment, Follow, Group, Post, User
 
 TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
@@ -47,6 +47,11 @@ class PostPagesTests(TestCase):
             group=cls.group,
             image=content_type,
         )
+        cls.comment = Comment.objects.create(
+            post=cls.post,
+            author=cls.user,
+            text='Тестовый коментарий',
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -55,6 +60,7 @@ class PostPagesTests(TestCase):
 
     def setUp(self):
         """Создание пользователей"""
+        self.guest_client = Client()
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
 
@@ -72,6 +78,36 @@ class PostPagesTests(TestCase):
             self.assertEqual(post.author, self.post.author)
             self.assertEqual(post.group, self.post.group)
             self.assertEqual(post.image, self.post.image)
+
+    def test_comment_correct(self):
+        ("""Проверка, что созданный комментарий появляется на """
+         """странице с постом.""")
+
+        response = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={'post_id': self.post.pk})
+        )
+
+        context_comment = response.context['comments'][0]
+
+        self.assertEqual(context_comment, self.comment)
+
+    def test_guest_cant_create_comment(self):
+        """Проверка, что гость не может создать комментарий."""
+
+        comments_count = Comment.objects.count()
+        address = reverse(
+            'posts:add_comment',
+            kwargs={'post_id': self.post.pk}
+        )
+
+        response = self.guest_client.post(address, follow=True)
+
+        self.assertRedirects(
+            response,
+            reverse('users:login') + '?next=' + address
+        )
+        self.assertEqual(Comment.objects.count(), comments_count)
+        self.assertEqual(Comment.objects.count(), comments_count)
 
     def test_forms_show_correct(self):
         """Проверка коректности формы."""
@@ -116,7 +152,7 @@ class PostPagesTests(TestCase):
                 'posts:profile',
                 kwargs={'username': self.user.username}))
         self.assertEqual(response.context['author'], self.user)
-        self.check_post_info(response.context)
+        self.assertEqual(response.context['following'], False)
 
     def test_detail_page_show_correct_context(self):
         """Шаблон post_detail.html сформирован с правильным контекстом."""
@@ -125,6 +161,8 @@ class PostPagesTests(TestCase):
                 'posts:post_detail',
                 kwargs={'post_id': self.post.id}))
         self.check_post_info(response.context)
+        self.assertEqual(response.context['comments'][0], self.comment)
+        self.assertTrue('form' in response.context)
 
     def test_cache_index_page(self):
         """Проверка работы кеша"""

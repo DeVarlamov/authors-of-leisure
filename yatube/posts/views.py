@@ -33,9 +33,9 @@ def profile(request, username):
     author = get_object_or_404(User, username=username)
     post = author.posts.all()
     page_obj = get_page(request, post)
-    following = request.user.is_authenticated
-    if following:
-        following = author.following.filter(user=request.user)
+    following = (request.user.is_authenticated and author.following.filter(
+        user=request.user).exists()
+    )
     return render(request, 'posts/profile.html', {
         'page_obj': page_obj,
         'author': author,
@@ -48,7 +48,6 @@ def post_detail(request, post_id):
     return render(request,
                   'posts/post_detail.html',
                   {'post': post,
-                   'requser': request.user,
                    'form': CommentForm(),
                    'comments': post.comments.all()})
 
@@ -117,10 +116,12 @@ def profile_follow(request, username):
 @login_required
 def profile_unfollow(request, username):
     """Дизлайк, отписка"""
-    user_follower = get_object_or_404(
-        Follow,
-        user=request.user,
-        author__username=username
+    user = request.user
+    author = get_object_or_404(User, username=username)
+    follow = Follow.objects.filter(
+        user=user,
+        author=author
     )
-    user_follower.delete()
+    if follow.exists():
+        follow.delete()
     return redirect('posts:profile', username)

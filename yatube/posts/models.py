@@ -56,7 +56,8 @@ class Post(models.Model):
     image = models.ImageField(
         'Картинка',
         upload_to='posts/',
-        blank=True
+        blank=True,
+        help_text='Тут можно загрузить картинку'
     )
 
     class Meta:
@@ -80,7 +81,9 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Автор')
     text = models.TextField(
-        verbose_name='Коментарий')
+        verbose_name='Коментарий',
+        help_text='Можно написать комментарий'
+    )
     created = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Создан')
@@ -113,6 +116,12 @@ class Follow(models.Model):
         verbose_name='Автор')
 
     class Meta:
+        consrein = [
+            models.UniqueConstraint(
+                fields=['user', 'author'],
+                name='unique_user_author',
+            )
+        ]
         verbose_name_plural = 'Подписки'
         verbose_name = 'Подписка'
 

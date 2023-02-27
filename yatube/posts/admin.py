@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from .models import Post, Group
+from .models import Comment, Post, Group
 
 
+@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_editable = ('group',)
     list_display = (
@@ -17,6 +18,7 @@ class PostAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
+@admin.register(Group)
 class GroupAdmin(admin.ModelAdmin):
     list_display = (
         'pk',
@@ -29,5 +31,9 @@ class GroupAdmin(admin.ModelAdmin):
     empty_value_display = '-пусто-'
 
 
-admin.site.register(Post, PostAdmin)
-admin.site.register(Group, GroupAdmin)
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('post', 'author', 'text', 'created', 'active')
+    list_filter = ('active', 'text', 'created', 'updated')
+    search_fields = ('post', 'author', 'text')
+    empty_value_display = '-пусто-'

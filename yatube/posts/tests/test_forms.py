@@ -99,7 +99,7 @@ class PostFormTests(TestCase):
         self.assertEqual(comment.author, self.post_author)
         self.assertEqual(comment.post_id, post.id)
         self.assertRedirects(
-            response, reverse('posts:post_detail', args={post.id}))
+            response, reverse('posts:post_detail', args=[post.id]))
 
     def test_authorized_user_edit_post(self):
         """Проверка редактирования записи авторизированным клиентом."""
