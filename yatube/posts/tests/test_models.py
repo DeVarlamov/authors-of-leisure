@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from ..models import Comment, Group, Post, User
+from ..models import Comment, Follow, Group, Post, User
 
 
 class PostModelTest(TestCase):
@@ -107,4 +107,34 @@ class CommentModelTest(TestCase):
         for value, expected in field_verboses.items():
             with self.subTest(value=value):
                 verbose_name = self.comment._meta.get_field(value).verbose_name
+                self.assertEqual(verbose_name, expected)
+
+
+class FollowModelTest(TestCase):
+    """Фикстуры для модели Falowe"""
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.user1 = User.objects.create_user(username='Jim Morison')
+        cls.user2 = User.objects.create_user(username='Sid Wilson')
+        cls.follow = Follow.objects.create(
+            user=cls.user1,
+            author=cls.user2,
+        )
+
+    def test_follow_str(self):
+        """Проверка __str__ у follow."""
+        self.assertEqual(
+            f'{self.follow.user} подписался на {self.follow.author}',
+            str(self.follow))
+
+    def test_follow_verbose_name(self):
+        """Проверка verbose_name у follow."""
+        field_verboses = {
+            'user': 'Пользователь',
+            'author': 'Автор',
+        }
+        for value, expected in field_verboses.items():
+            with self.subTest(value=value):
+                verbose_name = self.follow._meta.get_field(value).verbose_name
                 self.assertEqual(verbose_name, expected)
