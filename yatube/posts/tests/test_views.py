@@ -82,7 +82,10 @@ class PostPagesTests(TestCase):
     def test_comment_correct(self):
         ("""Проверка, что созданный комментарий появляется на """
          """странице с постом.""")
-        self.assertIn('Тестовый коментарий', self.comment.text)
+        response = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={'post_id': self.post.pk})
+        )
+        self.assertIn(self.comment, response.context['comments'])
 
     def test_guest_cant_create_comment(self):
         """Проверка, что гость не может создать комментарий."""
@@ -153,7 +156,7 @@ class PostPagesTests(TestCase):
                 'posts:post_detail',
                 kwargs={'post_id': self.post.id}))
         self.check_post_info(response.context)
-        self.assertIn('Тестовый коментарий', self.comment.text)
+        self.assertIn(self.comment, response.context['comments'])
         self.assertIsInstance(response.context.get('form'), CommentForm)
 
     def test_cache_index_page(self):
