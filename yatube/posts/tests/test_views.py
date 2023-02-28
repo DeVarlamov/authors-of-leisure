@@ -86,10 +86,7 @@ class PostPagesTests(TestCase):
         response = self.authorized_client.get(
             reverse('posts:post_detail', kwargs={'post_id': self.post.pk})
         )
-
-        context_comment = response.context['comments'][0]
-
-        self.assertEqual(context_comment, self.comment)
+        self.assertEqual(response.context['comments'][0], self.comment)
 
     def test_guest_cant_create_comment(self):
         """Проверка, что гость не может создать комментарий."""
