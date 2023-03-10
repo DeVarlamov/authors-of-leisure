@@ -124,3 +124,13 @@ def profile_unfollow(request, username):
     if follow.exists():
         follow.delete()
     return redirect('posts:profile', username)
+
+
+@login_required
+def delete_post(request, post_id=None):
+    '''Удаление поста'''
+    post_list = Post.objects.select_related('group', 'author')
+    page_obj = get_page(request, post_list)
+    post_to_delete = Post.objects.get(id=post_id)
+    post_to_delete.delete()
+    return render(request, 'posts/index.html', {"page_obj": page_obj})

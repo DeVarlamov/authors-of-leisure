@@ -34,6 +34,7 @@
     <p>{{ post.text|linebreaksbr }}</p>
     {% if user == post.author %}
       <a class="btn btn-primary" href="{% url 'posts:edit' post.id %}">редактировать запись</a>
+      <a class="btn btn-primary" href="{% url 'posts:delete' post.id %}">Удалить</a>
     {% endif %}
     {% include 'includes/comment.html' %}
   </article>

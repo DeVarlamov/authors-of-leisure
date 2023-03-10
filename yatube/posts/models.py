@@ -1,4 +1,7 @@
+from email.headerregistry import ContentTypeHeader
+from ipaddress import summarize_address_range
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 
 User = get_user_model()
@@ -70,6 +73,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
+    '''Модель Коментарий'''
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
@@ -104,6 +108,7 @@ class Comment(models.Model):
 
 
 class Follow(models.Model):
+    '''Модель подписок'''
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
