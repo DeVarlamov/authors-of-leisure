@@ -1,7 +1,4 @@
-from email.headerregistry import ContentTypeHeader
-from ipaddress import summarize_address_range
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 
 User = get_user_model()
@@ -31,7 +28,7 @@ class Group(models.Model):
 class Post(models.Model):
     """Модель постов"""
     text = models.TextField(
-        max_length=400,
+        max_length=3000,
         help_text='Введите текст поста',
         verbose_name='Текст поста'
     )

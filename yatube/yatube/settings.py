@@ -7,6 +7,8 @@ SECRET_KEY = 'y8+g#w7^$6zkfnumlnx*&$!%zdroeb4a9qn_uq_h9a@g%rcobi'
 DEBUG = True
 
 ALLOWED_HOSTS = [
+    'www.devarlamov.pythonanywhere.com',
+    'devarlamov.pythonanywhere.com',
     'localhost',
     '127.0.0.1',
     '[::1]',
